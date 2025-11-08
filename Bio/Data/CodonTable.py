@@ -150,18 +150,20 @@ class CodonTable:
             raise ValueError('The Table is empty')
         if first_aa not in self.protein_alphabet or secound_aa not in self.protein_alphabet:#ensure both amino acids are in prot alphbet
             raise ValueError('Input amino acids are not found in the CodonTable')
-        main_table = self.forward_table
+        main_table = self.forward_table.forward_table
 
         fliped_table = {}
         for key, value in main_table.items():
+            if 'T' in key: #get rid of the repetitive T's and U's
+                continue
             fliped_table.setdefault(value, []).append(key)
-        largest_hamming_difference = 0
+        largest_hamming_difference = 3 #assume 3 if there is less then 3 then changes
         first_aa_nulc_seqs = fliped_table[first_aa]
         sec_aa_nulc_seqs = fliped_table[secound_aa]
         for first_seq in first_aa_nulc_seqs:
             for sec_seq in sec_aa_nulc_seqs:
                 hamming_difference = sum(c1 != c2 for c1, c2 in zip(first_seq, sec_seq))
-                if hamming_difference > largest_hamming_difference:
+                if hamming_difference < largest_hamming_difference:
                     largest_hamming_difference = hamming_difference
         return largest_hamming_difference
 
