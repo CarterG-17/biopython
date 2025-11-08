@@ -144,6 +144,28 @@ class CodonTable:
                 answer += "\n" + line
             answer += "\n--+" + "+".join("---------" for c2 in letters) + "+--"
         return answer
+    
+    def num_of_differences(self, first_aa, secound_aa):#given 2 amino acids this will tell you how many nucl changes are away apart each aa is
+        if self.protein_alphabet == None: #check for empty
+            raise ValueError('The Table is empty')
+        if first_aa not in self.protein_alphabet or secound_aa not in self.protein_alphabet:#ensure both amino acids are in prot alphbet
+            raise ValueError('Input amino acids are not found in the CodonTable')
+        main_table = self.forward_table
+
+        fliped_table = {}
+        for key, value in main_table.items():
+            fliped_table.setdefault(value, []).append(key)
+        largest_hamming_difference = 0
+        first_aa_nulc_seqs = fliped_table[first_aa]
+        sec_aa_nulc_seqs = fliped_table[secound_aa]
+        for first_seq in first_aa_nulc_seqs:
+            for sec_seq in sec_aa_nulc_seqs:
+                hamming_difference = sum(c1 != c2 for c1, c2 in zip(first_seq, sec_seq))
+                if hamming_difference > largest_hamming_difference:
+                    largest_hamming_difference = hamming_difference
+        return largest_hamming_difference
+
+
 
 
 def make_back_table(table, default_stop_codon):
